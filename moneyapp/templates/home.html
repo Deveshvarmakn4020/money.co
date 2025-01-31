@@ -7,68 +7,67 @@
     <title>Home - Nehru Arts and Science College</title>
     <style>
         body {
-    font-family: Arial, sans-serif;
-    background-color: #fff; /* White background */
-    margin: 0; /* Remove margin to ensure the entire page is covered */
-    padding: 0; /* Remove padding to prevent extra space */
-    text-align: center;
-    height: 100vh; /* Ensure the body takes up the full height of the screen */
-}
+            font-family: Arial, sans-serif;
+            background-color: #fff; /* White background */
+            margin: 0; /* Remove margin to ensure the entire page is covered */
+            padding: 0; /* Remove padding to prevent extra space */
+            text-align: center;
+            height: 100vh; /* Ensure the body takes up the full height of the screen */
+        }
 
-.container {
-    width: 80%;
-    margin: auto;
-    background: #bec4c8; /* White background for the container */
-    padding: 20px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
-    margin-top: 50px; /* Keeps some space from the top */
-    height: 70%;
-}
+        .container {
+            width: 80%;
+            margin: auto;
+            background: #bec4c8; /* White background for the container */
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            margin-top: 50px; /* Keeps some space from the top */
+            height: 70%;
+        }
 
-nav {
-    text-align: right;
-    padding: 10px;
-}
+        nav {
+            text-align: right;
+            padding: 10px;
+        }
 
-.home-btn {
-    background-color: #007bff;
-    color: white;
-    padding: 10px 20px;
-    text-decoration: none;
-    border-radius: 100%;
-}
+        .home-btn {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 100%;
+        }
 
-.home-btn:hover {
-    background-color: #0056b3;
-}
+        .home-btn:hover {
+            background-color: #0056b3;
+        }
 
-h1 {
-    color: #333;
-}
+        h1 {
+            color: #333;
+        }
 
-h2 {
-    color: #007bff;
-}
+        h2 {
+            color: #007bff;
+        }
 
-p {
-    font-size: 16px;
-    color: #555;
-}
+        p {
+            font-size: 16px;
+            color: #555;
+        }
 
-.loan {
-    height: 60px;
-    width: 200px;
-    background-color: #68df44;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-size: 20px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    text-align: center;
-}
-
+        .loan {
+            height: 60px;
+            width: 200px;
+            background-color: #68df44;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 20px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -80,8 +79,19 @@ p {
             <h2>SOCIETY LOAN</h2>
         </section>
         <section>
-            <button class="loan"><b>LOAN</b></button>
+            <!-- Button with the onclick function to redirect -->
+            <button class="loan" onclick="redirectToLoanPage()"><b>LOAN</b></button>
         </section>
     </div>
+
+    <script>
+        function redirectToLoanPage() {
+            // Using Django's URL tag to dynamically create the correct URL
+            window.location.href = "{% url 'loan' %}";  // Replace 'loan_page' with the actual URL name in your urls.py
+
+            // Alternatively, you could use a static URL like this:
+            // window.location.href = "/loan-page-url/";  // Replace with your actual page URL
+        }
+    </script>
 </body>
 </html>
