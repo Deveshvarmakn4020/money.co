@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
+from .forms import LoginForm
 # home/views.py
 from django.shortcuts import render
 
@@ -8,18 +9,34 @@ def home(request):
     return render(request, 'home/index.html')
 
 
+# def login_view(request):
+#     if request.method == 'POST':
+#         username = request.POST.get('username')
+#         password = request.POST.get('password')
+#         user = authenticate(request, username=username, password=password)
+#         if user is not None:
+#             login(request, user)
+#             return redirect('home')  # Redirect to dashboard after login
+#         else:
+#             error = "Invalid username or password."
+#             return render(request, 'templates/login.html', {'error': error})
+#     return render(request, 'login.html')
+
 def login_view(request):
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            return redirect('home')  # Redirect to dashboard after login
-        else:
-            error = "Invalid username or password."
-            return render(request, 'templates/login.html', {'error': error})
-    return render(request, 'login.html')
+    form = LoginForm(data=request.POST or None)
+    if request.method == "POST":
+        if form.is_valid():
+            user = authenticate(
+                request,
+                username=form.cleaned_data['username'],
+                password=form.cleaned_data['password']
+            )
+            if user:
+                login(request, user)
+                return redirect('home')
+            else:
+                form.add_error(None, "Invalid credentials")
+    return render(request, 'login.html', {'form': form})
 def home(request):
     return render(request, 'home.html')
 
