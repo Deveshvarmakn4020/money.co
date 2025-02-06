@@ -1,3 +1,8 @@
+# moneyapp/admin.py
 from django.contrib import admin
+from .models import Member
 
-# Register your models here.
+@admin.register(Member)
+class MemberAdmin(admin.ModelAdmin):
+    list_display = ['name', 'member_id', 'department', 'mob']
+    search_fields = ['name', 'member_id']

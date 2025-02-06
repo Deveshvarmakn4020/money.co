@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
+from .forms import MemberForm
+from .models import Member
 from .forms import LoginForm
 # home/views.py
 from django.shortcuts import render
@@ -37,6 +39,27 @@ def login_view(request):
             else:
                 form.add_error(None, "Invalid credentials")
     return render(request, 'login.html', {'form': form})
+
+def register_member(request):
+    if request.method == 'POST':
+        form = MemberForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('home')
+    else:
+        form = MemberForm()
+
+    return render(request, 'register_member.html', {'form': form})
+
+def __init__(self, *args, **kwargs):
+        super(MemberForm, self).__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs.update({'class': 'form-control'})  # Add the class here
+
+def loan_information(request):
+    members = Member.objects.all()  # Retrieve all registered members
+    return render(request, 'loan.html', {'moneyapp_member': members})
+
 def home(request):
     return render(request, 'home.html')
 
