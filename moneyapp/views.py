@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect,get_object_or_404
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from .forms import MemberForm
@@ -58,25 +58,32 @@ def __init__(self, *args, **kwargs):
 
 def loan_information(request):
     members = Member.objects.all()  # Retrieve all registered members
-    return render(request, 'loan.html', {'moneyapp_member': members})
+    return render(request, 'loan.html', {'members': members})
+
 
 def home(request):
     return render(request, 'home.html')
-
-def next_page(request):
-    return render(request, 'home/next_page.html')
-
-def index(request):
-    return render(request, 'index.html')
 
 def teaching_staff(request):
     return render(request, 'teaching_staff.html')
 
 def non_teaching_staff(request):
-    return render(request, 'non_teaching_staff.html')
+    return render(request, 'nonteaching_staff.html')
 
 def loan(request):
     return render(request, 'loan.html')
+def edit_member(request, member_id):
+    member = get_object_or_404(Member, id=member_id)
+    if request.method == "POST":
+        form = MemberForm(request.POST, instance=member)
+        if form.is_valid():
+            form.save()
+            return redirect('loan')  # Redirect to loan page after editing
+    else:
+        form = MemberForm(instance=member)
+    return render(request, 'edit_member.html', {'form': form})
 
-def loan_application(request):
-    return render(request, 'loan_application.html')
+def delete_member(request, member_id):
+    member = get_object_or_404(Member, id=member_id)
+    member.delete()
+    return redirect('loan')  # Redirect to loan page after deletion
