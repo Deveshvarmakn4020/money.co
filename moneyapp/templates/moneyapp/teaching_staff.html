@@ -1,13 +1,13 @@
 {% extends 'base.html' %}
 
-{% block title %}Loan Information{% endblock %}
+{% block title %}Teaching Staff with Loans{% endblock %}
 
 {% block content %}
 <div class="container">
-    <h1 class="text-center mb-4">Registered Members</h1>
+    <h1 class="text-center mb-4">Teaching Staff with Loans</h1>
     <div class="card">
         <div class="card-header">
-            <h5 class="mb-0">Member Details</h5>
+            <h5 class="mb-0">Teaching Staff Details</h5>
         </div>
         <div class="card-body">
             {% if members %}
@@ -42,14 +42,15 @@
                     </tbody>
                 </table>
             {% else %}
-                <p class="text-center">No members registered.</p>
+                <p class="text-center">No teaching staff with loans found.</p>
             {% endif %}
-            
-            <!-- Back to Home Button below the table, smaller size -->
-            <div class="text-center mt-3">
-                <a href="{% url 'home' %}" class="btn btn-custom btn-sm">Back to Home</a>
-            </div>
         </div>
     </div>
 </div>
+
+<!-- Back to Home Button in the upper-right corner -->
+<div class="position-absolute top-0 end-0 p-3">
+    <a href="{% url 'home' %}" class="btn btn-custom btn-lg">Back to Home</a>
+</div>
+
 {% endblock %}

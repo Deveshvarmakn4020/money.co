@@ -1,4 +1,3 @@
-<!-- moneyapp/templates/home.html -->
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
@@ -9,25 +8,75 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            background-color: #f8f9fa; /* Light background */
+            background-color: #f4f7fa; /* Light neutral background */
         }
         .container {
             margin-top: 50px;
             padding: 30px;
             border-radius: 10px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); /* Gradient background */
-            color: white; /* Text color for better contrast */
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(145deg, #8f9eab 0%, #e0e5ec 100%); /* Soft gradient */
+            color: #2d3e50; /* Dark text color for better readability */
         }
         .btn-custom {
-            background-color: #ffffff; /* White button for contrast */
-            color: #007bff; /* Button text color */
+            background-color: #5d6b8d; /* Muted blue for buttons */
+            color: #ffffff; /* White text */
+            font-weight: 600;
+            border-radius: 30px;
+            padding: 10px 25px;
+            transition: background-color 0.3s ease-in-out;
         }
         .btn-custom:hover {
-            background-color:  #007bff; /* Light gray on hover */
+            background-color: #3b4c64; /* Darker shade on hover */
+        }
+        .card {
+            background-color: #ffffff;
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            width: 6cm; /* Set fixed width to 6cm */
+            height: 6cm; /* Set fixed height to 6cm */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .card:hover {
+            transform: translateY(-5px); /* Hover effect */
+            box-shadow: 0 6px 30px rgba(0, 0, 0, 0.15); /* Enhanced shadow on hover */
+        }
+        .card-body {
+            text-align: center;
+            padding: 10px;
         }
         h1, h2 {
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Text shadow for better readability */
+            color: #2d3e50;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2); /* Text shadow for better readability */
+        }
+        .lead {
+            font-size: 1.1rem;
+            font-weight: 400;
+            color: #3b4c64;
+        }
+        .card-footer {
+            text-align: center;
+            background-color: #f4f7fa;
+            border-top: 1px solid #e0e5ec;
+            padding: 5px 0;
+            font-size: 0.9rem;
+            color: #707a87;
+        }
+        .row {
+            display: flex;
+            justify-content: space-evenly;
+            margin-top: 40px;
+        }
+        .col-lg-3, .col-md-4, .col-sm-6 {
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: center;
         }
     </style>
 </head>
@@ -38,13 +87,48 @@
         </header>
         <section>
             <h2 class="mb-3">SOCIETY LOAN</h2>
-            <p class="lead">Welcome to the Banking Management System. Please choose an option below:</p>
+            <p class="lead mb-5">Welcome to the Banking Management System. Please choose an option below:</p>
         </section>
-        <section class="mt-4">
-            <a href="{% url 'loan' %}" class="btn btn-custom btn-lg mx-2">Loan Information</a>
-            <a href="{% url 'register_member' %}" class="btn btn-custom btn-lg mx-2">Register Member</a>
-            <a href="{% url 'teaching_staff' %}" class="btn btn-custom btn-lg mx-2">Teaching Staff</a>
-            <a href="{% url 'non_teaching_staff' %}" class="btn btn-custom btn-lg mx-2">Non-Teaching Staff</a>
+        <section class="row g-4">
+            <!-- Card 1: Loan Information -->
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card shadow">
+                    <div class="card-body">
+                        <h5>Loan Information</h5>
+                        <a href="{% url 'loan' %}" class="btn btn-custom btn-lg">View Loan Information</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2: Register Member -->
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card shadow">
+                    <div class="card-body">
+                        <h5>Register Member</h5>
+                        <a href="{% url 'register_member' %}" class="btn btn-custom btn-lg">Register Now</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3: Teaching Staff -->
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card shadow">
+                    <div class="card-body">
+                        <h5>Teaching Staff</h5>
+                        <a href="{% url 'teaching_staff' %}" class="btn btn-custom btn-lg">View Teaching Staff</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 4: Non-Teaching Staff -->
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card shadow">
+                    <div class="card-body">
+                        <h5>Non-Teaching Staff</h5>
+                        <a href="{% url 'non_teaching_staff' %}" class="btn btn-custom btn-lg">View Non-Teaching Staff</a>
+                    </div>
+                </div>
+            </div>
         </section>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

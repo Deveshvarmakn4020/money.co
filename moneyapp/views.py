@@ -87,3 +87,15 @@ def delete_member(request, member_id):
     member = get_object_or_404(Member, id=member_id)
     member.delete()
     return redirect('loan')  # Redirect to loan page after deletion
+def teaching_staff(request):
+    # Filter teaching staff who have a loan
+    teaching_members = Member.objects.filter(role='Teaching', has_loan=True)
+    return render(request, 'moneyapp/teaching_staff.html', {'members': teaching_members})
+
+
+
+def non_teaching_staff(request):
+    # Filter non-teaching staff who have a loan
+    non_teaching_members = Member.objects.filter(role='Non-Teaching', has_loan=True)
+    return render(request, 'moneyapp/non_teaching_staff.html', {'members': non_teaching_members})
+
