@@ -35,24 +35,24 @@
                 <table class="table table-striped">
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Phone</th>
-                            <th>Loan Amount</th>
-                            <th>Status</th>
+                          <th>ID</th>
+                          <th>Name</th>
+                          <th>Email</th>
+                          <th>Phone</th>
+                          <th>Loan Amount</th>
+                          <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for member in members %}
                         <tr>
-                            <td>{{ member.id }}</td>
+                            <td>{{ member.member_id }}</td>
                             <td>{{ member.name }}</td>
                             <td>{{ member.email }}</td>
-                            <td>{{ member.phone }}</td>
-                            <td>${{ member.loan_amount }}</td>
-                            <td>{{ member.status }}</td>
-                        </tr>
+                            <td>{{ member.mob }}</td>
+                            <td>{{ member.max_loan_amount }}</td>
+                            <td> -- Status Not Available -- </td>
+                          </tr>
                         {% empty %}
                         <tr>
                             <td colspan="6" class="text-center">No members registered.</td>
