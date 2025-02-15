@@ -4,11 +4,10 @@
 {% block title %}Register Member - My Application{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <h2 class="text-center mb-3">Member Registration</h2> <!-- Reduced margin -->
+<div class="container mt-1">
     <div class="card">
         <div class="card-header">
-            <h5 class="mb-0">Please fill in the details below:</h5>
+            <h5 class="mb-10">Member Registration:</h5>
         </div>
         <div class="card-body">
             <form method="POST" class="needs-validation" novalidate>
@@ -36,7 +35,7 @@
         </div>
     </div>
     <div class="text-center mt-2"> <!-- Reduced margin -->
-        <a href="{% url 'home' %}" class="btn btn-secondary">Back to Home</a>
+        <a href="{% url 'home' %}" class="btn btn-sm btn-secondary">Back to Home</a>
     </div>
 </div>
 {% endblock %}

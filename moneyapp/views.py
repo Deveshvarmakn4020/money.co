@@ -72,6 +72,7 @@ def non_teaching_staff(request):
 
 def loan(request):
     return render(request, 'loan.html')
+
 def edit_member(request, member_id):
     member = get_object_or_404(Member, id=member_id)
     if request.method == "POST":
@@ -87,6 +88,7 @@ def delete_member(request, member_id):
     member = get_object_or_404(Member, id=member_id)
     member.delete()
     return redirect('loan')  # Redirect to loan page after deletion
+
 def teaching_staff(request):
     # Filter teaching staff who have a loan
     teaching_members = Member.objects.filter(role='Teaching', has_loan=True)

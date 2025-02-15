@@ -44,12 +44,11 @@
             {% else %}
                 <p class="text-center">No members registered.</p>
             {% endif %}
-            
-            <!-- Back to Home Button below the table, smaller size -->
-            <div class="text-center mt-3">
-                <a href="{% url 'home' %}" class="btn btn-custom btn-sm">Back to Home</a>
-            </div>
         </div>
+    </div>
+     <!-- Back to Home Button below the table, smaller size -->
+     <div class="text-center mt-3">
+        <a href="{% url 'home' %}" class="btn btn-sm btn-secondary">Back to Home</a>
     </div>
 </div>
 {% endblock %}
