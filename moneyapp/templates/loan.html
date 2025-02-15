@@ -19,12 +19,12 @@
                             <th>Email</th>
                             <th>Phone</th>
                             <th>Loan Amount</th>
-                            <th>Actions</th>  <!-- New column for buttons -->
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for member in members %}
-                        <tr>
+                        <tr data-href="{% url 'detail_members' member.id %}" style="cursor: pointer;">
                             <td>{{ member.member_id }}</td>
                             <td>{{ member.name }}</td>
                             <td>{{ member.email }}</td>
@@ -32,7 +32,7 @@
                             <td>{{ member.max_loan_amount }}</td>
                             <td>
                                 <a href="{% url 'edit_member' member.id %}" class="btn btn-warning btn-sm">Edit</a>
-                                <a href="{% url 'delete_member' member.id %}" class="btn btn-danger btn-sm"
+                                <a href="{% url 'delete_member' member.id %}" class="btn btn-danger btn-sm delete-btn"
                                    onclick="return confirm('Are you sure you want to delete this member?');">
                                     Delete
                                 </a>
@@ -45,6 +45,35 @@
                 <p class="text-center">No members registered.</p>
             {% endif %}
         </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                var rows = document.querySelectorAll('tr[data-href]');
+                rows.forEach(function(row) {
+                    row.addEventListener('click', function() {
+                        window.location.href = row.getAttribute('data-href');
+                    });
+                });
+
+                var deleteButtons = document.querySelectorAll('.delete-btn');
+                deleteButtons.forEach(function(button) {
+                    button.addEventListener('click', function(event) {
+                        event.stopPropagation();
+                    });
+                });
+            });
+        </script>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                var rows = document.querySelectorAll('tr[data-href]');
+                rows.forEach(function(row) {
+                    row.addEventListener('click', function() {
+                        window.location.href = row.getAttribute('data-href');
+                    });
+                });
+            });
+        </script>
     </div>
      <!-- Back to Home Button below the table, smaller size -->
      <div class="text-center mt-3">

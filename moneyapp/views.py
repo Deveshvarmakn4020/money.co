@@ -7,9 +7,6 @@ from .forms import LoginForm
 # home/views.py
 from django.shortcuts import render
 
-def home(request):
-    return render(request, 'home/index.html')
-
 
 # def login_view(request):
 #     if request.method == 'POST':
@@ -64,12 +61,6 @@ def loan_information(request):
 def home(request):
     return render(request, 'home.html')
 
-def teaching_staff(request):
-    return render(request, 'teaching_staff.html')
-
-def non_teaching_staff(request):
-    return render(request, 'nonteaching_staff.html')
-
 def loan(request):
     return render(request, 'loan.html')
 
@@ -101,3 +92,6 @@ def non_teaching_staff(request):
     non_teaching_members = Member.objects.filter(role='Non-Teaching', has_loan=True)
     return render(request, 'moneyapp/non_teaching_staff.html', {'members': non_teaching_members})
 
+def detail_members(request,  member_id):
+    member = get_object_or_404(Member, id=member_id)
+    return render(request, 'detail_members.html', {'member': member})
