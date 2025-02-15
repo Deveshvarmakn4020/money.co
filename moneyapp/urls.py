@@ -10,5 +10,7 @@ urlpatterns = [
     path('delete-member/<int:member_id>/', views.delete_member, name='delete_member'),  # Delete URL
     path('teaching_staff/', views.teaching_staff, name='teaching_staff'),
     path('non_teaching_staff/', views.non_teaching_staff, name='non_teaching_staff'),
-
+    path('details/<int:member_id>/', views.detail_members, name='detail_members'),
+    path('edit-member/<int:member_id>/', views.edit_member, name='edit_member'),
+    path('delete-member/<int:member_id>/', views.delete_member, name='delete_member'),
 ]
