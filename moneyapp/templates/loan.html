@@ -1,3 +1,88 @@
+<<<<<<< HEAD
+{% extends 'base.html' %}
+
+{% block title %}Loan Information{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="text-center mb-4">Registered Members</h1>
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Member Details</h5>
+        </div>
+        <div class="card-body">
+            {% if members %}
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Loan Amount</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for member in members %}
+                        <tr data-href="{% url 'detail_members' member.id %}" style="cursor: pointer;">
+                            <td>{{ member.member_id }}</td>
+                            <td>{{ member.name }}</td>
+                            <td>{{ member.email }}</td>
+                            <td>{{ member.mob }}</td>
+                            <td>{{ member.max_loan_amount }}</td>
+                            <td>
+                                <a href="{% url 'edit_member' member.id %}" class="btn btn-warning btn-sm">Edit</a>
+                                <a href="{% url 'delete_member' member.id %}" class="btn btn-danger btn-sm delete-btn"
+                                   onclick="return confirm('Are you sure you want to delete this member?');">
+                                    Delete
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p class="text-center">No members registered.</p>
+            {% endif %}
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                var rows = document.querySelectorAll('tr[data-href]');
+                rows.forEach(function(row) {
+                    row.addEventListener('click', function() {
+                        window.location.href = row.getAttribute('data-href');
+                    });
+                });
+
+                var deleteButtons = document.querySelectorAll('.delete-btn');
+                deleteButtons.forEach(function(button) {
+                    button.addEventListener('click', function(event) {
+                        event.stopPropagation();
+                    });
+                });
+            });
+        </script>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                var rows = document.querySelectorAll('tr[data-href]');
+                rows.forEach(function(row) {
+                    row.addEventListener('click', function() {
+                        window.location.href = row.getAttribute('data-href');
+                    });
+                });
+            });
+        </script>
+    </div>
+     <!-- Back to Home Button below the table, smaller size -->
+     <div class="text-center mt-3">
+        <a href="{% url 'home' %}" class="btn btn-sm btn-secondary">Back to Home</a>
+    </div>
+</div>
+{% endblock %}
+=======
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,3 +95,4 @@
     <a href="{% url 'index' %}">Back to Home</a>
 </body>
 </html>
+>>>>>>> loantree

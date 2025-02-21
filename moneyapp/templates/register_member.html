@@ -1,0 +1,41 @@
+<!-- moneyapp/templates/register_member.html -->
+{% extends 'base.html' %}
+
+{% block title %}Register Member - My Application{% endblock %}
+
+{% block content %}
+<div class="container mt-1">
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-10">Member Registration:</h5>
+        </div>
+        <div class="card-body">
+            <form method="POST" class="needs-validation" novalidate>
+                {% csrf_token %}
+                <div class="row g-2"> <!-- Reduced gap between columns -->
+                    {% for field in form %}
+                    <div class="col-md-6 mb-2"> <!-- Reduced margin for form groups -->
+                        <div class="form-group">
+                            <label for="{{ field.id_for_label }}" class="label">{{ field.label }}</label>
+                            {{ field }}  <!-- Render the field directly -->
+                            {% if field.help_text %}
+                            <small class="form-text text-muted">{{ field.help_text }}</small>
+                            {% endif %}
+                            {% for error in field.errors %}
+                            <div class="text-danger">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="text-center mt-3"> <!-- Reduced margin -->
+                    <button type="submit" class="btn btn-primary">Register Member</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="text-center mt-2"> <!-- Reduced margin -->
+        <a href="{% url 'home' %}" class="btn btn-sm btn-secondary">Back to Home</a>
+    </div>
+</div>
+{% endblock %}
