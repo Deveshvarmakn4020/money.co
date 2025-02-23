@@ -1,6 +1,5 @@
 from django.db import models
 
-<<<<<<< HEAD
 class Member(models.Model):
     ROLE_CHOICES = [
         ('Teaching', 'Teaching Staff'),
@@ -26,7 +25,3 @@ class Member(models.Model):
 
     def __str__(self):
         return self.name
-=======
-# Create your models here.
-
->>>>>>> loantree
