@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 {% extends 'base.html' %}
 
 {% block title %}Loan Information{% endblock %}
@@ -7,8 +6,10 @@
 <div class="container">
     <h1 class="text-center mb-4">Registered Members</h1>
     <div class="card">
-        <div class="card-header">
+        <div class="card-header d-flex justify-content-between align-items-center">
             <h5 class="mb-0">Member Details</h5>
+            <input type="text" id="tableSearch" class="form-control form-control-sm" 
+                   placeholder="Search..." style="width: 200px;">
         </div>
         <div class="card-body">
             {% if members %}
@@ -46,53 +47,40 @@
                 <p class="text-center">No members registered.</p>
             {% endif %}
         </div>
-
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                var rows = document.querySelectorAll('tr[data-href]');
-                rows.forEach(function(row) {
-                    row.addEventListener('click', function() {
-                        window.location.href = row.getAttribute('data-href');
-                    });
-                });
-
-                var deleteButtons = document.querySelectorAll('.delete-btn');
-                deleteButtons.forEach(function(button) {
-                    button.addEventListener('click', function(event) {
-                        event.stopPropagation();
-                    });
-                });
-            });
-        </script>
-
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                var rows = document.querySelectorAll('tr[data-href]');
-                rows.forEach(function(row) {
-                    row.addEventListener('click', function() {
-                        window.location.href = row.getAttribute('data-href');
-                    });
-                });
-            });
-        </script>
     </div>
-     <!-- Back to Home Button below the table, smaller size -->
-     <div class="text-center mt-3">
+    <!-- Back to Home Button below the table, smaller size -->
+    <div class="text-center mt-3">
         <a href="{% url 'home' %}" class="btn btn-sm btn-secondary">Back to Home</a>
     </div>
 </div>
+
+<script>
+    // Live search functionality for table
+    document.getElementById("tableSearch").addEventListener("keyup", function() {
+        let filter = this.value.toUpperCase();
+        let rows = document.querySelectorAll("tbody tr");
+
+        rows.forEach(row => {
+            let text = row.innerText.toUpperCase();
+            row.style.display = text.includes(filter) ? "" : "none";
+        });
+    });
+
+    // Clickable rows navigation & prevent accidental navigation on delete
+    document.addEventListener('DOMContentLoaded', function() {
+        var rows = document.querySelectorAll('tr[data-href]');
+        rows.forEach(function(row) {
+            row.addEventListener('click', function() {
+                window.location.href = row.getAttribute('data-href');
+            });
+        });
+
+        var deleteButtons = document.querySelectorAll('.delete-btn');
+        deleteButtons.forEach(function(button) {
+            button.addEventListener('click', function(event) {
+                event.stopPropagation(); // Prevents clicking "Delete" from triggering row navigation
+            });
+        });
+    });
+</script>
 {% endblock %}
-=======
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Loan</title>
-</head>
-<body>
-    <h1>Loan Information</h1>
-    <a href="{% url 'index' %}">Back to Home</a>
-</body>
-</html>
->>>>>>> loantree

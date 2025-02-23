@@ -5,10 +5,16 @@
 {% block content %}
 <div class="container">
     <h1 class="text-center mb-4">Teaching Staff with Loans</h1>
+    
+    <!-- Search Bar -->
+
     <div class="card">
-        <div class="card-header">
-            <h5 class="mb-0">Teaching Staff Details</h5>
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 me-3">Teaching Staff Details</h5> 
+            <input type="text" id="tableSearch" class="form-control form-control-sm" 
+                   placeholder="Search..." style="width: 200px;">
         </div>
+    
         <div class="card-body">
             {% if members %}
                 <table class="table table-striped">
@@ -19,12 +25,12 @@
                             <th>Email</th>
                             <th>Phone</th>
                             <th>Loan Amount</th>
-                            <th>Actions</th>  <!-- New column for buttons -->
+                            <th>Actions</th> 
                         </tr>
                     </thead>
                     <tbody>
                         {% for member in members %}
-                        <tr>
+                        <tr data-href="{% url 'detail_members' member.id %}" style="cursor: pointer;">
                             <td>{{ member.member_id }}</td>
                             <td>{{ member.name }}</td>
                             <td>{{ member.email }}</td>
@@ -48,9 +54,38 @@
     </div>
 </div>
 
- <!-- Back to Home Button below the table, smaller size -->
- <div class="text-center mt-3">
+<!-- Back to Home Button -->
+<div class="text-center mt-3">
     <a href="{% url 'home' %}" class="btn btn-sm btn-secondary">Back to Home</a>
 </div>
+
+<!-- JavaScript for Instant Search -->
+<script>
+    document.getElementById("tableSearch").addEventListener("keyup", function() {
+        let filter = this.value.toUpperCase();
+        let rows = document.querySelectorAll("tbody tr");
+
+        rows.forEach(row => {
+            let text = row.innerText.toUpperCase();
+            row.style.display = text.includes(filter) ? "" : "none";
+        });
+    });
+    // Clickable rows navigation & prevent accidental navigation on delete
+    document.addEventListener('DOMContentLoaded', function() {
+        var rows = document.querySelectorAll('tr[data-href]');
+        rows.forEach(function(row) {
+            row.addEventListener('click', function() {
+                window.location.href = row.getAttribute('data-href');
+            });
+        });
+
+        var deleteButtons = document.querySelectorAll('.delete-btn');
+        deleteButtons.forEach(function(button) {
+            button.addEventListener('click', function(event) {
+                event.stopPropagation(); // Prevents clicking "Delete" from triggering row navigation
+            });
+        });
+    });
+</script>
 
 {% endblock %}
