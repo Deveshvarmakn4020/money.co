@@ -54,7 +54,7 @@ def __init__(self, *args, **kwargs):
             field.widget.attrs.update({'class': 'form-control'})  # Add the class here
 
 def loan_information(request):
-    members = Member.objects.all()  # Retrieve all registered members
+    members = Member.objects.filter(has_loan = True )
     return render(request, 'loan.html', {'members': members})
 
 
@@ -63,6 +63,11 @@ def home(request):
 
 def loan(request):
     return render(request, 'loan.html')
+
+def members_list(request):
+    members = Member.objects.all()  # Retrieve all members
+    return render(request, 'members.html', {'members': members})
+
 
 def edit_member(request, member_id):
     member = get_object_or_404(Member, id=member_id)
