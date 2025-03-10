@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block title %}Loan Repayment{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center">Loan Repayment</h2>
+
+    <div class="card">
+        <div class="card-body">
+            <form method="POST">
+                {% csrf_token %}
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <label>Member Name:</label>
+                        <input type="text" class="form-control" value="{{ member.name }}" disabled>
+                    </div>
+                    <div class="col-md-6">
+                        <label>Loan ID:</label>
+                        <input type="text" class="form-control" value="{{ member.loan_id }}" disabled>
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <label>Outstanding Loan Balance:</label>
+                        <input type="text" id="loan_balance" class="form-control" value="{{ member.loan_balance }}" disabled>
+                    </div>
+                    <div class="col-md-6">
+                        <label>Monthly Interest (11.5% of Balance):</label>
+                        <input type="text" id="interest_amount" class="form-control" value="{{ interest_amount }}" readonly>
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <label>Principal Paid:</label>
+                        <input type="number" id="principal_paid" name="principal_paid" class="form-control" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label>Total Payment (Interest + Principal):</label>
+                        <input type="text" id="total_payment" class="form-control" readonly>
+                    </div>
+                </div>
+
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-success">Submit Payment</button>
+                    <a href="{% url 'loan' %}" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        let loanBalance = parseFloat(document.getElementById("loan_balance").value) || 0;
+        let interestAmountField = document.getElementById("interest_amount");
+        let principalPaidField = document.getElementById("principal_paid");
+        let totalPaymentField = document.getElementById("total_payment");
+
+        function calculateInterestAndTotal() {
+            let interestAmount = (loanBalance * 0.115).toFixed(2);  // 11.5% interest
+            interestAmountField.value = interestAmount;
+
+            let principalPaid = parseFloat(principalPaidField.value) || 0;
+            let totalPayment = (parseFloat(interestAmount) + principalPaid).toFixed(2);
+            totalPaymentField.value = totalPayment;
+        }
+
+        principalPaidField.addEventListener("input", calculateInterestAndTotal);
+        calculateInterestAndTotal(); // Initial calculation
+    });
+</script>
+
+{% endblock %}
