@@ -11,24 +11,32 @@
             <form method="POST">
                 {% csrf_token %}
 
+                <!-- Repayment Date -->
                 <div class="row">
+                    <div class="col-md-6">
+                        <label>Repayment Date:</label>
+                        <input type="date" name="repayment_date" class="form-control" required>
+                    </div>
+                </div>
+
+                <div class="row mt-3">
                     <div class="col-md-6">
                         <label>Member Name:</label>
                         <input type="text" class="form-control" value="{{ member.name }}" disabled>
                     </div>
                     <div class="col-md-6">
-                        <label>Loan ID:</label>
-                        <input type="text" class="form-control" value="{{ member.loan_id }}" disabled>
+                        <label>Member ID:</label>
+                        <input type="text" class="form-control" value="{{ member.member_id }}" disabled>
                     </div>
                 </div>
 
                 <div class="row mt-3">
                     <div class="col-md-6">
                         <label>Outstanding Loan Balance:</label>
-                        <input type="text" id="loan_balance" class="form-control" value="{{ member.loan_balance }}" disabled>
+                        <input type="text" id="loan_balance" class="form-control" value="{{ member.max_loan_amount }}" disabled>
                     </div>
                     <div class="col-md-6">
-                        <label>Monthly Interest (11.5% of Balance):</label>
+                        <label>Monthly Interest (0.9583% of Balance):</label>
                         <input type="text" id="interest_amount" class="form-control" value="{{ interest_amount }}" readonly>
                     </div>
                 </div>
@@ -41,6 +49,13 @@
                     <div class="col-md-6">
                         <label>Total Payment (Interest + Principal):</label>
                         <input type="text" id="total_payment" class="form-control" readonly>
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <label>Repayment Number:</label>
+                        <input type="text" class="form-control" value="{{ repayment_number }}" disabled>
                     </div>
                 </div>
 
@@ -60,8 +75,9 @@
         let principalPaidField = document.getElementById("principal_paid");
         let totalPaymentField = document.getElementById("total_payment");
 
+        // Function to calculate interest and total payment
         function calculateInterestAndTotal() {
-            let interestAmount = (loanBalance * 0.115).toFixed(2);  // 11.5% interest
+            let interestAmount = (loanBalance * 0.009583).toFixed(2);  // 0.9583% interest based on the opening balance
             interestAmountField.value = interestAmount;
 
             let principalPaid = parseFloat(principalPaidField.value) || 0;
@@ -69,7 +85,9 @@
             totalPaymentField.value = totalPayment;
         }
 
+        // Event listener for recalculating total payment when principal is changed
         principalPaidField.addEventListener("input", calculateInterestAndTotal);
+
         calculateInterestAndTotal(); // Initial calculation
     });
 </script>

@@ -12,48 +12,19 @@
 		<div class="card-body">
 			<div class="row">
 				<div class="col-md-6">
-					<div class="mb-3">
-						<label class="form-label">Name:</label>
-						<p>{{ member.name }}</p>
-					</div>
-					<div class="mb-3">
-						<label class="form-label">Email:</label>
-						<p>{{ member.email }}</p>
-					</div>
-					<div class="mb-3">
-						<label class="form-label">Phone:</label>
-						<p>{{ member.mob }}</p>
-					</div>
-					<div class="mb-3">
-						<label class="form-label">Department:</label>
-						<p>{{ member.department }}</p>
-					</div>
-					<div class="mb-3">
-						<label class="form-label">Designation:</label>
-						<p>{{ member.designation }}</p>
-					</div>
+					<p><strong>Name:</strong> {{ member.name }}</p>
+					<p><strong>Email:</strong> {{ member.email }}</p>
+					<p><strong>Phone:</strong> {{ member.mob }}</p>
+					<p><strong>Department:</strong> {{ member.department }}</p>
+					<p><strong>Designation:</strong> {{ member.designation }}</p>
+					<p><strong>Date of Birth:</strong> {{ member.dob }}</p>
 				</div>
 				<div class="col-md-6">
-					<div class="mb-3">
-						<label class="form-label">Address:</label>
-						<p>{{ member.address }}</p>
-					</div>
-					<div class="mb-3">
-						<label class="form-label">Date of Birth:</label>
-						<p>{{ member.dob }}</p>
-					</div>
-					<div class="mb-3">
-						<label class="form-label">Membership Date:</label>
-						<p>{{ member.doj }}</p>
-					</div>
-					<div class="mb-3">
-						<label class="form-label">Loan Span:</label>
-						<p>{{ member.maximum_period }}</p>
-					</div>
-					<div class="mb-3">
-						<label class="form-label">Loan Amount:</label>
-						<p>{{ member.max_loan_amount }}</p>
-					</div>
+					<p><strong>Membership Date:</strong> {{ member.doj }}</p>
+					<p><strong>Loan Amount:</strong> ₹{{ member.max_loan_amount }}</p>
+					<p><strong>Loan Span:</strong> {{ member.maximum_period }} months</p>
+					<p><strong>Role:</strong> {{ member.role }}</p>
+					<p><strong>Status:</strong> {% if member.has_loan %}Loan Active{% else %}No Active Loan{% endif %}</p>
 				</div>
 			</div>
 			<div class="text-center mt-4">

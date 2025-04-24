@@ -38,3 +38,13 @@ class Loan(models.Model):
 
     def __str__(self):
         return f"Loan {self.loan_no} for {self.member.name}"
+
+class LoanRepayment(models.Model):
+    member = models.ForeignKey(Member, on_delete=models.CASCADE)
+    interest_paid = models.DecimalField(max_digits=10, decimal_places=2)
+    principal_paid = models.DecimalField(max_digits=10, decimal_places=2)
+    total_payment = models.DecimalField(max_digits=10, decimal_places=2)
+    repayment_date = models.DateField(auto_now_add=False)
+
+    def __str__(self):
+        return f"{self.member.name} - {self.repayment_date}"
