@@ -4,150 +4,66 @@
 {% block title %}Loan Repayments{% endblock %}
 
 {% block content %}
-<div class="container-fluid p-0">
-    <!-- Page Header with Search -->
-    <div class="d-sm-flex align-items-center justify-content-between mb-3">
-        <h1 class="h3 mb-0 text-gray-800">
-            <i class="fas fa-money-bill-wave text-primary mr-2"></i>Loan Repayments
-        </h1>
-        <div class="d-flex">
-            <div class="input-group input-group-sm mr-2" style="width: 250px;">
-                <input type="text" class="form-control" placeholder="Search members..." id="searchInput">
-                <div class="input-group-append">
-                    <button class="btn btn-primary" type="button" id="searchButton">
-                        <i class="fas fa-search"></i>
-                    </button>
-                </div>
-            </div>
-            <a href="#" class="btn btn-primary btn-sm">
-                <i class="fas fa-plus mr-1"></i> New
-            </a>
+<div class="container mt-4" style="max-width: 1100px;">
+
+    <!-- Header with Search -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="text-dark fw-bold">Loan Repayments</h3>
+        <div class="input-group" style="width: 300px;">
+            <input type="text" class="form-control border-primary" placeholder="Search member..." id="searchInput">
+            <button class="btn btn-primary" type="button" id="searchButton">
+                <i class="fas fa-search"></i>
+            </button>
         </div>
     </div>
 
-    <!-- Summary Cards - Compact -->
-    <div class="row mb-3">
-        <div class="col-md-3 mb-3">
-            <div class="card border-left-primary h-100 py-2">
-                <div class="card-body p-2">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-primary">Active Loans</div>
-                            <div class="h5 mb-0">{{ active_loans_count }}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-hand-holding-usd text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 mb-3">
-            <div class="card border-left-danger h-100 py-2">
-                <div class="card-body p-2">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-danger">Overdue</div>
-                            <div class="h5 mb-0">{{ overdue_payments_count }}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-exclamation-triangle text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 mb-3">
-            <div class="card border-left-success h-100 py-2">
-                <div class="card-body p-2">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-success">Collected</div>
-                            <div class="h5 mb-0">₹{{ total_collected|default:"0" }}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-rupee-sign text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 mb-3">
-            <div class="card border-left-info h-100 py-2">
-                <div class="card-body p-2">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-info">Members</div>
-                            <div class="h5 mb-0">{{ loanees|length }}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-users text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Data Table - Full Width -->
-    <div class="card">
+    <!-- Repayment Table -->
+    <div class="card shadow-sm border-0">
         <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table table-sm table-hover mb-0" id="repaymentTable">
-                    <thead class="thead-light">
+                <table class="table table-hover mb-0" id="repaymentTable">
+                    <thead class="table-light text-uppercase small text-muted">
                         <tr>
-                            <th>Member</th>
+                            <th>Member Name</th>
                             <th>Loan Amount</th>
                             <th>Last Payment</th>
                             <th>Status</th>
-                            <th class="text-right">Action</th>
+                            <th class="text-end">Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for loanee in loanees %}
                         <tr>
+                            <td class="fw-semibold">{{ loanee.name }}</td>
+                            <td>₹{{ loanee.max_loan_amount|floatformat:2 }}</td>
                             <td>
-                                <div class="d-flex align-items-center">
-                                    <div class="bg-primary text-white rounded-circle mr-2" style="width:30px;height:30px;line-height:30px;text-align:center;">
-                                        {{ loanee.name|slice:":1"|upper }}
-                                    </div>
-                                    <div>
-                                        <div class="font-weight-bold">{{ loanee.name }}</div>
-                                        <small class="text-muted">MEM-{{ loanee.id|stringformat:"04d" }}</small>
-                                    </div>
-                                </div>
-                            </td>
-                            <td class="font-weight-bold">₹{{ loanee.max_loan_amount }}</td>
-                            <td>
-                                {% with last_payment=loanee.loanrepayment_set.last %}
-                                {% if last_payment %}
-                                <div>₹{{ last_payment.total_payment }}</div>
-                                <small class="text-muted">{{ last_payment.repayment_date|date:"d M" }}</small>
-                                {% else %}
-                                <span class="text-muted">None</span>
-                                {% endif %}
+                                {% with last=loanee.loanrepayment_set.last %}
+                                    {% if last %}
+                                        ₹{{ last.total_payment }}<br>
+                                        <small class="text-muted">{{ last.repayment_date|date:"d M Y" }}</small>
+                                    {% else %}
+                                        <span class="text-muted">No payment yet</span>
+                                    {% endif %}
                                 {% endwith %}
                             </td>
                             <td>
-                                {% with last_payment=loanee.loanrepayment_set.last %}
-                                {% if last_payment %}
-                                <span class="badge badge-success">Paid</span>
+                                {% if loanee.loanrepayment_set.last %}
+                                    <span class="badge bg-success text-white px-3 py-1 rounded-pill">Paid</span>
                                 {% else %}
-                                <span class="badge badge-warning">Pending</span>
+                                    <span class="badge bg-warning text-dark px-3 py-1 rounded-pill">Pending</span>
                                 {% endif %}
-                                {% endwith %}
                             </td>
-                            <td class="text-right">
-                                <a href="{% url 'repayment_detail' loanee.id %}" class="btn btn-sm btn-outline-primary">
+                            <td class="text-end">
+                                <a href="{% url 'repayment_detail' loanee.id %}" class="btn btn-outline-primary btn-sm rounded-pill px-3">
                                     View
                                 </a>
                             </td>
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="5" class="text-center py-4">
-                                <i class="fas fa-user-slash fa-2x text-gray-300 mb-2"></i>
-                                <div class="text-muted">No repayment records found</div>
+                            <td colspan="5" class="text-center py-5 text-muted">
+                                <i class="fas fa-folder-open fa-2x mb-2"></i><br>
+                                No repayment records found.
                             </td>
                         </tr>
                         {% endfor %}
@@ -156,31 +72,28 @@
             </div>
         </div>
     </div>
+
 </div>
 {% endblock %}
 
 {% block extra_js %}
 <script>
-    $(document).ready(function() {
-        // Search functionality with button
-        $('#searchButton').click(function() {
-            performSearch();
-        });
-        
-        // Also search on Enter key
-        $('#searchInput').keypress(function(e) {
-            if(e.which == 13) {
-                performSearch();
-            }
-        });
+    document.addEventListener('DOMContentLoaded', function () {
+        const input = document.getElementById('searchInput');
+        const button = document.getElementById('searchButton');
         
         function performSearch() {
-            var value = $('#searchInput').val().toLowerCase();
-            $('#repaymentTable tbody tr').each(function() {
-                var rowText = $(this).text().toLowerCase();
-                $(this).toggle(rowText.indexOf(value) > -1);
+            const value = input.value.toLowerCase();
+            document.querySelectorAll('#repaymentTable tbody tr').forEach(function (row) {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(value) ? '' : 'none';
             });
         }
+
+        button.addEventListener('click', performSearch);
+        input.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') performSearch();
+        });
     });
 </script>
 {% endblock %}
