@@ -1,4 +1,6 @@
 from django.db import models
+from django.shortcuts import render
+
 
 class Member(models.Model):
     ROLE_CHOICES = [
@@ -48,3 +50,21 @@ class LoanRepayment(models.Model):
 
     def __str__(self):
         return f"{self.member.name} - {self.repayment_date}"
+    
+class Repayment(models.Model):
+    member = models.ForeignKey(Member, on_delete=models.CASCADE)
+    repayment_number = models.PositiveIntegerField()
+    date = models.DateField()
+    interest_paid = models.DecimalField(max_digits=10, decimal_places=2)
+    principal_paid = models.DecimalField(max_digits=10, decimal_places=2)
+    outstanding_balance = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f"{self.member.name} - Repayment {self.repayment_number}"
+    
+# Repayments Dashboard View
+def repayment_loanee_list(request):
+    loanees = Member.objects.filter(loanrepayment__isnull=False).distinct()
+    return render(request, 'repayments/repayment_loanee_list.html', {'loanees': loanees})
+
+

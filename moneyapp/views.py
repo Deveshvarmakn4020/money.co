@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from .forms import MemberForm, LoginForm, LoanForm
 from .models import Member, Loan, LoanRepayment
@@ -22,7 +22,7 @@ def login_view(request):
                 form.add_error(None, "Invalid credentials")
     return render(request, 'login.html', {'form': form})
 
-# Home
+# Home View
 def home(request):
     return render(request, 'home.html')
 
@@ -63,12 +63,12 @@ def loan_information(request):
 # Teaching Staff View
 def teaching_staff(request):
     members = Member.objects.filter(role='Teaching', has_loan=True)
-    return render(request, 'moneyapp/teaching_staff.html', {'members': members})
+    return render(request, 'teaching_staff.html', {'members': members})
 
 # Non-Teaching Staff View
 def non_teaching_staff(request):
     members = Member.objects.filter(role='Non-Teaching', has_loan=True)
-    return render(request, 'moneyapp/non_teaching_staff.html', {'members': members})
+    return render(request, 'non_teaching_staff.html', {'members': members})
 
 # Member Detail View
 def detail_members(request, member_id):
@@ -79,25 +79,23 @@ def detail_members(request, member_id):
 # Loan Repayment View
 def loan_repayment(request, member_id):
     member = get_object_or_404(Member, id=member_id)
-    
+
     if request.method == 'POST':
         try:
             repayment_date = request.POST.get('repayment_date')
             principal_paid = Decimal(request.POST.get('principal_paid', 0))
-            
+
             if principal_paid <= 0:
                 messages.error(request, "Principal amount must be greater than 0.")
                 return redirect('loan_repayment', member_id=member_id)
-            
+
             if principal_paid > member.max_loan_amount:
                 messages.error(request, "Principal amount cannot exceed outstanding balance.")
                 return redirect('loan_repayment', member_id=member_id)
-            
-            # Calculate monthly interest (0.9583% of current balance)
+
             interest_paid = round(member.max_loan_amount * Decimal('0.009583'), 2)
             total_payment = interest_paid + principal_paid
-            
-            # Create repayment record
+
             LoanRepayment.objects.create(
                 member=member,
                 interest_paid=interest_paid,
@@ -105,34 +103,30 @@ def loan_repayment(request, member_id):
                 total_payment=total_payment,
                 repayment_date=repayment_date
             )
-            
-            # Update member's loan balance
+
             member.max_loan_amount -= principal_paid
             if member.max_loan_amount <= 0:
                 member.has_loan = False
             member.save()
-            
+
             messages.success(request, f"Repayment of ₹{total_payment} recorded successfully!")
             return redirect('detail_members', member_id=member_id)
-            
+
         except Exception as e:
             messages.error(request, f"Error processing repayment: {str(e)}")
             return redirect('loan_repayment', member_id=member_id)
-    
-    # GET request handling
+
     if member.max_loan_amount <= 0:
         messages.error(request, "No outstanding loan balance.")
         return redirect('loan')
-    
-    # Calculate repayment number with proper ordinal suffix
+
     repayment_count = LoanRepayment.objects.filter(member=member).count()
     ordinal = lambda n: "%d%s" % (n, {1: "st", 2: "nd", 3: "rd"}.get(n if n < 20 else n % 10, "th"))
     repayment_number = f"{ordinal(repayment_count + 1)} Repayment"
-    
-    # Calculate initial interest amount (0.9583% of current balance)
+
     interest_amount = round(member.max_loan_amount * Decimal('0.009583'), 2)
-    
-    return render(request, 'moneyapp/loan_repayment.html', {
+
+    return render(request, 'loan_repayment.html', {
         'member': member,
         'interest_amount': interest_amount,
         'repayment_number': repayment_number,
@@ -153,3 +147,25 @@ def add_loan(request, member_id):
     else:
         form = LoanForm()
     return render(request, 'add_loan.html', {'form': form, 'member': member})
+
+# Repayments Loanee List
+def repayments(request):
+    loanees = Member.objects.filter(loanrepayment__isnull=False).distinct()
+    return render(request, 'repayment_loanee_list.html', {'loanees': loanees})
+
+# Detailed Repayment View per Loanee
+def repayment_details(request, member_id):
+    member = get_object_or_404(Member, id=member_id)
+    repayments = LoanRepayment.objects.filter(member=member).order_by('id')
+
+    total_interest = sum(r.interest_paid for r in repayments)
+    total_principal = sum(r.principal_paid for r in repayments)
+    final_balance = member.max_loan_amount
+
+    return render(request, 'repayment_detail.html', {  # Changed from 'repayments/repayment_details.html'
+        'member': member,
+        'repayments': repayments,
+        'total_interest': total_interest,
+        'total_principal': total_principal,
+        'final_balance': final_balance
+    })

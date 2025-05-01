@@ -6,7 +6,7 @@
     <p class="text-center text-muted">Manage your loans and finances effortlessly.</p>
 
     <div class="row row-cols-1 row-cols-md-3 g-4">
-        <!-- Card 1 -->
+        <!-- Loan Information Card -->
         <div class="col">
             <div class="card shadow h-100">
                 <div class="card-body text-center">
@@ -16,8 +16,8 @@
                 </div>
             </div>
         </div>
-        
-        <!-- Card 2 -->
+
+        <!-- Register Member Card -->
         <div class="col">
             <div class="card shadow h-100">
                 <div class="card-body text-center">
@@ -27,8 +27,8 @@
                 </div>
             </div>
         </div>
-        
-        <!-- Card 3 -->
+
+        <!-- Teaching Staff Card -->
         <div class="col">
             <div class="card shadow h-100">
                 <div class="card-body text-center">
@@ -38,13 +38,25 @@
                 </div>
             </div>
         </div>
-        <!-- Card 4 -->
+
+        <!-- Non-Teaching Staff Card -->
         <div class="col">
             <div class="card shadow h-100">
                 <div class="card-body text-center">
                     <h5 class="card-title text-primary">Non-Teaching Staff</h5>
                     <p class="card-text">Non Teaching Staff</p>
                     <a href="{% url 'non_teaching_staff' %}" class="btn btn-primary">View</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Repayments Card -->
+        <div class="col">
+            <div class="card shadow h-100">
+                <div class="card-body text-center">
+                    <h5 class="card-title text-primary">Repayments</h5>
+                    <p class="card-text">View loanees and their repayment history.</p>
+                    <a href="{% url 'repayment_loanee_list' %}" class="btn btn-primary">View Repayments</a>
                 </div>
             </div>
         </div>

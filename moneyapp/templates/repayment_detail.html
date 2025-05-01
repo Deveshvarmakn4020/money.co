@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <h2 class="text-center text-primary mb-4">Repayment Details for {{ member.name }}</h2>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+                <tr class="text-center">
+                    <th>Repayment No.</th>
+                    <th>Date</th>
+                    <th>Interest Paid</th>
+                    <th>Principal Paid</th>
+                    <th>Outstanding Balance</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if repayments %}
+                    {% for repayment in repayments %}
+                        <tr class="text-center">
+                            <td>Repayment {{ repayment.repayment_number }}</td>
+                            <td>{{ repayment.date|date:"d M Y" }}</td>  <!-- Ensure the date is formatted -->
+                            <td>₹{{ repayment.interest_paid }}</td>
+                            <td>₹{{ repayment.principal_paid }}</td>
+                            <td>₹{{ repayment.outstanding_balance }}</td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="5" class="text-center text-danger">No repayments found for this member.</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="mt-4">
+        <h4>Summary</h4>
+        <ul class="list-group">
+            <li class="list-group-item">Total Interest Paid: ₹{{ total_interest }}</li>
+            <li class="list-group-item">Total Principal Paid: ₹{{ total_principal }}</li>
+            <li class="list-group-item">Final Outstanding Balance: ₹{{ final_balance }}</li>
+        </ul>
+    </div>
+
+    <div class="mt-4 text-center">
+        <button onclick="window.print()" class="btn btn-primary">Print</button>
+    </div>
+</div>
+{% endblock %}

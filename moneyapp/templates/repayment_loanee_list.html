@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Loan Repayments{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0">
+    <!-- Page Header with Search -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-3">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-money-bill-wave text-primary mr-2"></i>Loan Repayments
+        </h1>
+        <div class="d-flex">
+            <div class="input-group input-group-sm mr-2" style="width: 250px;">
+                <input type="text" class="form-control" placeholder="Search members..." id="searchInput">
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="button" id="searchButton">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+            <a href="#" class="btn btn-primary btn-sm">
+                <i class="fas fa-plus mr-1"></i> New
+            </a>
+        </div>
+    </div>
+
+    <!-- Summary Cards - Compact -->
+    <div class="row mb-3">
+        <div class="col-md-3 mb-3">
+            <div class="card border-left-primary h-100 py-2">
+                <div class="card-body p-2">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary">Active Loans</div>
+                            <div class="h5 mb-0">{{ active_loans_count }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-hand-holding-usd text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card border-left-danger h-100 py-2">
+                <div class="card-body p-2">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-danger">Overdue</div>
+                            <div class="h5 mb-0">{{ overdue_payments_count }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-exclamation-triangle text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card border-left-success h-100 py-2">
+                <div class="card-body p-2">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success">Collected</div>
+                            <div class="h5 mb-0">₹{{ total_collected|default:"0" }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-rupee-sign text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card border-left-info h-100 py-2">
+                <div class="card-body p-2">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info">Members</div>
+                            <div class="h5 mb-0">{{ loanees|length }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-users text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data Table - Full Width -->
+    <div class="card">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-sm table-hover mb-0" id="repaymentTable">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>Member</th>
+                            <th>Loan Amount</th>
+                            <th>Last Payment</th>
+                            <th>Status</th>
+                            <th class="text-right">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for loanee in loanees %}
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="bg-primary text-white rounded-circle mr-2" style="width:30px;height:30px;line-height:30px;text-align:center;">
+                                        {{ loanee.name|slice:":1"|upper }}
+                                    </div>
+                                    <div>
+                                        <div class="font-weight-bold">{{ loanee.name }}</div>
+                                        <small class="text-muted">MEM-{{ loanee.id|stringformat:"04d" }}</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="font-weight-bold">₹{{ loanee.max_loan_amount }}</td>
+                            <td>
+                                {% with last_payment=loanee.loanrepayment_set.last %}
+                                {% if last_payment %}
+                                <div>₹{{ last_payment.total_payment }}</div>
+                                <small class="text-muted">{{ last_payment.repayment_date|date:"d M" }}</small>
+                                {% else %}
+                                <span class="text-muted">None</span>
+                                {% endif %}
+                                {% endwith %}
+                            </td>
+                            <td>
+                                {% with last_payment=loanee.loanrepayment_set.last %}
+                                {% if last_payment %}
+                                <span class="badge badge-success">Paid</span>
+                                {% else %}
+                                <span class="badge badge-warning">Pending</span>
+                                {% endif %}
+                                {% endwith %}
+                            </td>
+                            <td class="text-right">
+                                <a href="{% url 'repayment_detail' loanee.id %}" class="btn btn-sm btn-outline-primary">
+                                    View
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center py-4">
+                                <i class="fas fa-user-slash fa-2x text-gray-300 mb-2"></i>
+                                <div class="text-muted">No repayment records found</div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        // Search functionality with button
+        $('#searchButton').click(function() {
+            performSearch();
+        });
+        
+        // Also search on Enter key
+        $('#searchInput').keypress(function(e) {
+            if(e.which == 13) {
+                performSearch();
+            }
+        });
+        
+        function performSearch() {
+            var value = $('#searchInput').val().toLowerCase();
+            $('#repaymentTable tbody tr').each(function() {
+                var rowText = $(this).text().toLowerCase();
+                $(this).toggle(rowText.indexOf(value) > -1);
+            });
+        }
+    });
+</script>
+{% endblock %}
