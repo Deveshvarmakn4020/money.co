@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
+from django.db import transaction
 from .forms import MemberForm, LoginForm, LoanForm
 from .models import Member, Loan, LoanRepayment
 from decimal import Decimal
@@ -84,30 +85,37 @@ def loan_repayment(request, member_id):
         try:
             repayment_date = request.POST.get('repayment_date')
             principal_paid = Decimal(request.POST.get('principal_paid', 0))
-
             if principal_paid <= 0:
                 messages.error(request, "Principal amount must be greater than 0.")
                 return redirect('loan_repayment', member_id=member_id)
-
             if principal_paid > member.max_loan_amount:
                 messages.error(request, "Principal amount cannot exceed outstanding balance.")
                 return redirect('loan_repayment', member_id=member_id)
 
+            # Calculate interest and total
             interest_paid = round(member.max_loan_amount * Decimal('0.009583'), 2)
             total_payment = interest_paid + principal_paid
 
-            LoanRepayment.objects.create(
-                member=member,
-                interest_paid=interest_paid,
-                principal_paid=principal_paid,
-                total_payment=total_payment,
-                repayment_date=repayment_date
-            )
+            # Determine repayment_number and outstanding_balance
+            repayment_count = LoanRepayment.objects.filter(member=member).count()
+            new_repayment_number = repayment_count + 1
+            new_outstanding = member.max_loan_amount - principal_paid
 
-            member.max_loan_amount -= principal_paid
-            if member.max_loan_amount <= 0:
-                member.has_loan = False
-            member.save()
+            # Create repayment record and update member in one transaction
+            with transaction.atomic():
+                LoanRepayment.objects.create(
+                    member=member,
+                    repayment_number=new_repayment_number,
+                    repayment_date=repayment_date,
+                    interest_paid=interest_paid,
+                    principal_paid=principal_paid,
+                    total_payment=total_payment,
+                    outstanding_balance=new_outstanding
+                )
+                member.max_loan_amount = new_outstanding
+                if member.max_loan_amount <= 0:
+                    member.has_loan = False
+                member.save()
 
             messages.success(request, f"Repayment of ₹{total_payment} recorded successfully!")
             return redirect('detail_members', member_id=member_id)
@@ -116,14 +124,13 @@ def loan_repayment(request, member_id):
             messages.error(request, f"Error processing repayment: {str(e)}")
             return redirect('loan_repayment', member_id=member_id)
 
+    # If GET: prepare form with next repayment number
     if member.max_loan_amount <= 0:
         messages.error(request, "No outstanding loan balance.")
         return redirect('loan')
-
     repayment_count = LoanRepayment.objects.filter(member=member).count()
-    ordinal = lambda n: "%d%s" % (n, {1: "st", 2: "nd", 3: "rd"}.get(n if n < 20 else n % 10, "th"))
-    repayment_number = f"{ordinal(repayment_count + 1)} Repayment"
-
+    ordinal = lambda n: "%d%s" % (n, {1:"st",2:"nd",3:"rd"}.get(n if n<20 else n%10, "th"))
+    repayment_number = f"{ordinal(repayment_count+1)} Repayment"
     interest_amount = round(member.max_loan_amount * Decimal('0.009583'), 2)
 
     return render(request, 'loan_repayment.html', {
@@ -156,13 +163,14 @@ def repayments(request):
 # Detailed Repayment View per Loanee
 def repayment_details(request, member_id):
     member = get_object_or_404(Member, id=member_id)
-    repayments = LoanRepayment.objects.filter(member=member).order_by('id')
+    # Order by repayment_number (chronological for that member)
+    repayments = LoanRepayment.objects.filter(member=member).order_by('repayment_number')
 
     total_interest = sum(r.interest_paid for r in repayments)
     total_principal = sum(r.principal_paid for r in repayments)
     final_balance = member.max_loan_amount
 
-    return render(request, 'repayment_detail.html', {  # Changed from 'repayments/repayment_details.html'
+    return render(request, 'repayment_detail.html', {
         'member': member,
         'repayments': repayments,
         'total_interest': total_interest,

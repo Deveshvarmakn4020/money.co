@@ -80,20 +80,17 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const input = document.getElementById('searchInput');
-        const button = document.getElementById('searchButton');
-        
+
         function performSearch() {
-            const value = input.value.toLowerCase();
+            const value = input.value.trim().toLowerCase();
             document.querySelectorAll('#repaymentTable tbody tr').forEach(function (row) {
-                const text = row.textContent.toLowerCase();
-                row.style.display = text.includes(value) ? '' : 'none';
+                const nameCell = row.querySelector('td:first-child');
+                const nameText = nameCell ? nameCell.textContent.trim().toLowerCase() : '';
+                row.style.display = nameText.startsWith(value) ? '' : 'none';
             });
         }
 
-        button.addEventListener('click', performSearch);
-        input.addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') performSearch();
-        });
+        input.addEventListener('input', performSearch);
     });
 </script>
 {% endblock %}

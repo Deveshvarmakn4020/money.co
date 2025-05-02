@@ -20,8 +20,8 @@
                 {% if repayments %}
                     {% for repayment in repayments %}
                         <tr class="text-center">
-                            <td><strong>Repayment {{ repayment.repayment_number }}</strong></td>
-                            <td>{{ repayment.date|date:"d M Y" }}</td>
+                            <td><strong>{{ repayment.repayment_number }}</strong></td>
+                            <td>{{ repayment.repayment_date|date:"d M Y" }}</td>
                             <td>₹{{ repayment.interest_paid|floatformat:2 }}</td>
                             <td>₹{{ repayment.principal_paid|floatformat:2 }}</td>
                             <td>₹{{ repayment.outstanding_balance|floatformat:2 }}</td>
