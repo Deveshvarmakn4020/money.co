@@ -5,7 +5,7 @@
     <div class="row justify-content-center">
         <div class="col-lg-10">
             <div class="card shadow-sm border-0">
-                <div class="card-header bg-primary text-white">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                     <h4 class="mb-0">Paid-Off Members</h4>
                 </div>
                 <div class="card-body p-4">
@@ -23,8 +23,8 @@
                                     <td>{{ repayment.member.name }}</td>
                                     <td class="text-center">
                                         <a href="{% url 'view_paid_off_details' repayment.member.id %}" 
-                                           class="btn btn-sm btn-outline-primary">
-                                            View Details
+                                           class="btn btn-sm btn-success">
+                                            <i class="bi bi-eye"></i> View Details
                                         </a>
                                     </td>
                                 </tr>

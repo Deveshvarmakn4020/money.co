@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4" id="printSection">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Paid Off Member Details</h2>
+        <button class="btn btn-outline-secondary d-print-none" onclick="window.print()">
+            🖨️ Print
+        </button>
+    </div>
+
+    <!-- Member Info Card -->
+    <div class="card mb-4">
+        <div class="card-header bg-success text-white">
+            Member Information
+        </div>
+        <div class="card-body row">
+            <div class="col-md-6">
+                <p><strong>Name:</strong> {{ member.name }}</p>
+                <p><strong>Email:</strong> {{ member.email }}</p>
+                <p><strong>Gender:</strong> {{ member.gender }}</p>
+                <p><strong>Phone:</strong> {{ member.phone }}</p>
+                <p><strong>Date of Birth:</strong> {{ member.dob }}</p>
+            </div>
+            <div class="col-md-6">
+                <p><strong>Department:</strong> {{ member.department }}</p>
+                <p><strong>Designation:</strong> {{ member.designation }}</p>
+                <p><strong>Role:</strong> {{ member.role }}</p>
+                <p><strong>Max Loan Amount:</strong> ₹{{ member.max_loan_amount }}</p>
+                <p><strong>Has Loan:</strong> {{ member.has_loan|yesno:"Yes,No" }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Repayment History -->
+    <div class="card">
+        <div class="card-header bg-info text-white">
+            Loan Repayment Details
+        </div>
+        <div class="card-body">
+            {% if repayments %}
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Date</th>
+                            <th>Interest Paid</th>
+                            <th>Principal Paid</th>
+                            <th>Total Payment</th>
+                            <th>Outstanding Balance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for r in repayments %}
+                        <tr>
+                            <td>{{ r.repayment_number }}</td>
+                            <td>{{ r.repayment_date }}</td>
+                            <td>₹{{ r.interest_paid }}</td>
+                            <td>₹{{ r.principal_paid }}</td>
+                            <td>₹{{ r.total_payment }}</td>
+                            <td>₹{{ r.outstanding_balance }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <p><strong>Total Interest Paid:</strong> ₹{{ total_interest }}</p>
+                <p><strong>Total Principal Paid:</strong> ₹{{ total_principal }}</p>
+                <p><strong>Final Outstanding Balance:</strong> ₹{{ final_balance }}</p>
+            {% else %}
+                <p>No repayment records found.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+@media print {
+    .d-print-none {
+        display: none !important;
+    }
+    body {
+        -webkit-print-color-adjust: exact !important;
+    }
+}
+</style>
+{% endblock %}

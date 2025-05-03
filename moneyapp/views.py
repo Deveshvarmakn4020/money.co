@@ -188,7 +188,19 @@ def paid_off_list(request):
 # Placeholder for Paid Off Detail View (you'll define functionality later)
 def view_paid_off_details(request, member_id):
     member = get_object_or_404(Member, id=member_id)
-    return render(request, 'paid_off_detail.html', {'member': member})
+    repayments = LoanRepayment.objects.filter(member=member).order_by('repayment_number')
+
+    total_interest = sum(r.interest_paid for r in repayments)
+    total_principal = sum(r.principal_paid for r in repayments)
+    final_balance = member.max_loan_amount
+
+    return render(request, 'paid_off_detail.html', {
+        'member': member,
+        'repayments': repayments,
+        'total_interest': total_interest,
+        'total_principal': total_principal,
+        'final_balance': final_balance
+    })
 
 # Paid Off View
 def paid_off_loanees(request):
