@@ -30,4 +30,8 @@ urlpatterns = [
     path('loan-repayment/<int:member_id>/', views.loan_repayment, name='loan_repayment'),
     path('repayments/', views.repayments, name='repayment_loanee_list'),
     path('repayments/<int:member_id>/', views.repayment_details, name='repayment_detail'),
+    path('paid_off/', views.paid_off_list, name='paid_off_list'),
+    path('paid_off/view/<int:member_id>/', views.view_paid_off_details, name='view_paid_off_details'),  # placeholder
+    path('paid-off/', views.paid_off_loanees, name='paid_off_loanees'),
+
 ]

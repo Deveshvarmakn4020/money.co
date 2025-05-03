@@ -5,6 +5,7 @@ from django.db import transaction
 from .forms import MemberForm, LoginForm, LoanForm
 from .models import Member, Loan, LoanRepayment
 from decimal import Decimal
+from django.db.models import Max
 
 # Login View
 def login_view(request):
@@ -163,7 +164,6 @@ def repayments(request):
 # Detailed Repayment View per Loanee
 def repayment_details(request, member_id):
     member = get_object_or_404(Member, id=member_id)
-    # Order by repayment_number (chronological for that member)
     repayments = LoanRepayment.objects.filter(member=member).order_by('repayment_number')
 
     total_interest = sum(r.interest_paid for r in repayments)
@@ -177,3 +177,20 @@ def repayment_details(request, member_id):
         'total_principal': total_principal,
         'final_balance': final_balance
     })
+
+# NEW: Paid Off View - List members with outstanding_balance == 0
+def paid_off_list(request):
+    latest_repayments = LoanRepayment.objects.values('member').annotate(latest_id=Max('id'))
+    latest_ids = [entry['latest_id'] for entry in latest_repayments]
+    paid_off_repayments = LoanRepayment.objects.filter(id__in=latest_ids, outstanding_balance=0)
+    return render(request, 'paid_off_list.html', {'paid_off_loanees': paid_off_repayments})
+
+# Placeholder for Paid Off Detail View (you'll define functionality later)
+def view_paid_off_details(request, member_id):
+    member = get_object_or_404(Member, id=member_id)
+    return render(request, 'paid_off_detail.html', {'member': member})
+
+# Paid Off View
+def paid_off_loanees(request):
+    members = Member.objects.filter(max_loan_amount=0)
+    return render(request, 'paid_off.html', {'members': members})

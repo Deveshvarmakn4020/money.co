@@ -8,55 +8,66 @@
     <div class="row row-cols-1 row-cols-md-3 g-4">
         <!-- Loan Information Card -->
         <div class="col">
-            <div class="card shadow h-100">
+            <div class="card shadow-sm h-100">
                 <div class="card-body text-center">
                     <h5 class="card-title text-primary">Loan Information</h5>
                     <p class="card-text">Get easy and fast loans with flexible repayment plans.</p>
-                    <a href="{% url 'loan' %}" class="btn btn-primary">View Loan</a>
+                    <a href="{% url 'loan' %}" class="btn btn-outline-primary">View Loan</a>
                 </div>
             </div>
         </div>
 
         <!-- Register Member Card -->
         <div class="col">
-            <div class="card shadow h-100">
+            <div class="card shadow-sm h-100">
                 <div class="card-body text-center">
                     <h5 class="card-title text-primary">Register a Member</h5>
                     <p class="card-text">Join us and enjoy exclusive financial benefits.</p>
-                    <a href="{% url 'register_member' %}" class="btn btn-primary">Register</a>
+                    <a href="{% url 'register_member' %}" class="btn btn-outline-primary">Register</a>
                 </div>
             </div>
         </div>
 
         <!-- Teaching Staff Card -->
         <div class="col">
-            <div class="card shadow h-100">
+            <div class="card shadow-sm h-100">
                 <div class="card-body text-center">
                     <h5 class="card-title text-primary">Teaching Staff</h5>
-                    <p class="card-text">Teaching Staff</p>
-                    <a href="{% url 'teaching_staff' %}" class="btn btn-primary">View</a>
+                    <p class="card-text">View all registered teaching staff with loans.</p>
+                    <a href="{% url 'teaching_staff' %}" class="btn btn-outline-primary">View</a>
                 </div>
             </div>
         </div>
 
         <!-- Non-Teaching Staff Card -->
         <div class="col">
-            <div class="card shadow h-100">
+            <div class="card shadow-sm h-100">
                 <div class="card-body text-center">
                     <h5 class="card-title text-primary">Non-Teaching Staff</h5>
-                    <p class="card-text">Non Teaching Staff</p>
-                    <a href="{% url 'non_teaching_staff' %}" class="btn btn-primary">View</a>
+                    <p class="card-text">View all registered non-teaching staff with loans.</p>
+                    <a href="{% url 'non_teaching_staff' %}" class="btn btn-outline-primary">View</a>
                 </div>
             </div>
         </div>
 
         <!-- Repayments Card -->
         <div class="col">
-            <div class="card shadow h-100">
+            <div class="card shadow-sm h-100">
                 <div class="card-body text-center">
                     <h5 class="card-title text-primary">Repayments</h5>
-                    <p class="card-text">View loanees and their repayment history.</p>
-                    <a href="{% url 'repayment_loanee_list' %}" class="btn btn-primary">View Repayments</a>
+                    <p class="card-text">View loanees and their repayment records.</p>
+                    <a href="{% url 'repayment_loanee_list' %}" class="btn btn-outline-primary">View Repayments</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Paid Off Card -->
+        <div class="col">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center">
+                    <h5 class="card-title text-success">Paid Off</h5>
+                    <p class="card-text">View members who have fully repaid their loans.</p>
+                    <a href="{% url 'paid_off_list' %}" class="btn btn-outline-success">View Paid Off</a>
                 </div>
             </div>
         </div>
