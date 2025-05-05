@@ -2,6 +2,13 @@
 
 from django.db import models
 from django.db.models import UniqueConstraint
+from django.core.validators import RegexValidator
+
+# Validator that only allows exactly 10 digits
+phone_validator = RegexValidator(
+    regex=r'^\d{10}$',
+    message='Enter a valid 10‑digit mobile number.'
+)
 
 class Member(models.Model):
     ROLE_CHOICES = [('Teaching', 'Teaching Staff'), ('Non-Teaching', 'Non-Teaching Staff')]
@@ -9,7 +16,7 @@ class Member(models.Model):
     member_id       = models.CharField(max_length=50, unique=True)
     department      = models.CharField(max_length=100, blank=True)
     designation     = models.CharField(max_length=100, blank=True)
-    mob             = models.BigIntegerField()
+    mob = models.CharField(max_length=10, validators=[phone_validator])
     email           = models.EmailField()
     dob             = models.DateField()
     doj             = models.DateField()
