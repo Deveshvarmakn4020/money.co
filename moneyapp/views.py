@@ -158,7 +158,7 @@ def add_loan(request, member_id):
 
 # Repayments Loanee List
 def repayments(request):
-    loanees = Member.objects.filter(loanrepayment__isnull=False).distinct()
+    loanees = Member.objects.filter(loanrepayment__isnull=False, has_loan=True).distinct()
     return render(request, 'repayment_loanee_list.html', {'loanees': loanees})
 
 # Detailed Repayment View per Loanee
