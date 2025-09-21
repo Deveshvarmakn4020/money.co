@@ -4,38 +4,126 @@
 {% block title %}Register Member - My Application{% endblock %}
 
 {% block content %}
-<div class="container mt-1">
-    <div class="card">
-        <div class="card-header">
-            <h5 class="mb-10">Member Registration:</h5>
-        </div>
-        <div class="card-body">
-            <form method="POST" class="needs-validation" novalidate>
-                {% csrf_token %}
-                <div class="row g-2"> <!-- Reduced gap between columns -->
-                    {% for field in form %}
-                    <div class="col-md-6 mb-2"> <!-- Reduced margin for form groups -->
+<style>
+    body {
+        background: linear-gradient(135deg, #f0f4f8, #d9e4ec);
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        animation: fadeInUp 0.8s ease;
+    }
+
+    .card-header {
+        background: linear-gradient(90deg, #0d6efd, #0b5ed7);
+        color: #fff;
+        border-top-left-radius: 15px;
+        border-top-right-radius: 15px;
+        padding: 15px 20px;
+    }
+
+    .card-header h5 {
+        margin: 0;
+        font-weight: 600;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .form-group label {
+        font-weight: 500;
+        color: #333;
+        display: block;
+        margin-bottom: 6px;
+    }
+
+    .form-control {
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        padding: 8px 12px;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 6px rgba(13, 110, 253, 0.3);
+    }
+
+    .btn-primary {
+        background: linear-gradient(90deg, #0d6efd, #0b5ed7);
+        border: none;
+        border-radius: 8px;
+        padding: 10px 20px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+    }
+
+    .btn-primary:hover {
+        background: linear-gradient(90deg, #0b5ed7, #0a58ca);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(13, 110, 253, 0.4);
+    }
+
+    .btn-secondary {
+        border-radius: 6px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-secondary:hover {
+        transform: scale(1.05);
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+<div class="container mt-4 mb-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h5>✨ Member Registration ✨</h5>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        
+                        {% for field in form %}
                         <div class="form-group">
-                            <label for="{{ field.id_for_label }}" class="label">{{ field.label }}</label>
-                            {{ field }}  <!-- Render the field directly -->
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
                             {% if field.help_text %}
                             <small class="form-text text-muted">{{ field.help_text }}</small>
                             {% endif %}
                             {% for error in field.errors %}
-                            <div class="text-danger">{{ error }}</div>
+                            <div class="text-danger small">{{ error }}</div>
                             {% endfor %}
                         </div>
-                    </div>
-                    {% endfor %}
+                        {% endfor %}
+
+                        <div class="text-center mt-3">
+                            <button type="submit" class="btn btn-primary px-4">Register Member</button>
+                        </div>
+                    </form>
                 </div>
-                <div class="text-center mt-3"> <!-- Reduced margin -->
-                    <button type="submit" class="btn btn-primary">Register Member</button>
-                </div>
-            </form>
+            </div>
+            <div class="text-center mt-3">
+                <a href="{% url 'home' %}" class="btn btn-sm btn-secondary">← Back to Home</a>
+            </div>
         </div>
-    </div>
-    <div class="text-center mt-2"> <!-- Reduced margin -->
-        <a href="{% url 'home' %}" class="btn btn-sm btn-secondary">Back to Home</a>
     </div>
 </div>
 {% endblock %}
