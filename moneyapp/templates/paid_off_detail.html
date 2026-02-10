@@ -46,6 +46,7 @@
                             <th>Date</th>
                             <th>Interest Paid</th>
                             <th>Principal Paid</th>
+                            <th>RD Amount</th>
                             <th>Total Payment</th>
                             <th>Outstanding Balance</th>
                         </tr>
@@ -57,14 +58,19 @@
                             <td>{{ r.repayment_date }}</td>
                             <td>₹{{ r.interest_paid }}</td>
                             <td>₹{{ r.principal_paid }}</td>
+                            <td>₹{{ r.rd_amount|default:0 }}</td>
                             <td>₹{{ r.total_payment }}</td>
                             <td>₹{{ r.outstanding_balance }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
                 </table>
+
+                <hr>
+
                 <p><strong>Total Interest Paid:</strong> ₹{{ total_interest }}</p>
                 <p><strong>Total Principal Paid:</strong> ₹{{ total_principal }}</p>
+                <p><strong>Total RD Amount:</strong> ₹{{ total_rd }}</p>
                 <p><strong>Final Outstanding Balance:</strong> ₹{{ final_balance }}</p>
             {% else %}
                 <p>No repayment records found.</p>

@@ -5,13 +5,13 @@
 {% block content %}
 <div class="container mt-4">
     <h2 class="text-center">Loan Repayment</h2>
-    
+
     {% if messages %}
         {% for message in messages %}
             <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
                 {{ message }}
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
+                <button type="button" class="close" data-dismiss="alert">
+                    <span>&times;</span>
                 </button>
             </div>
         {% endfor %}
@@ -26,102 +26,130 @@
                 <div class="row">
                     <div class="col-md-6">
                         <label>Repayment Date:</label>
-                        <input type="date" name="repayment_date" class="form-control" required id="repaymentDate">
+                        <input type="date" name="repayment_date"
+                               class="form-control" required id="repaymentDate">
                     </div>
                 </div>
 
+                <!-- Member Info -->
                 <div class="row mt-3">
                     <div class="col-md-6">
                         <label>Member Name:</label>
-                        <input type="text" class="form-control" value="{{ member.name }}" disabled>
+                        <input type="text" class="form-control"
+                               value="{{ member.name }}" disabled>
                     </div>
                     <div class="col-md-6">
                         <label>Member ID:</label>
-                        <input type="text" class="form-control" value="{{ member.member_id }}" disabled>
+                        <input type="text" class="form-control"
+                               value="{{ member.member_id }}" disabled>
                     </div>
                 </div>
 
+                <!-- Loan & Interest -->
                 <div class="row mt-3">
                     <div class="col-md-6">
                         <label>Outstanding Loan Balance (₹):</label>
-                        <input type="text" id="loan_balance" class="form-control" value="{{ member.max_loan_amount }}" disabled>
+                        <input type="text" id="loan_balance"
+                               class="form-control"
+                               value="{{ member.max_loan_amount }}" disabled>
                     </div>
                     <div class="col-md-6">
-                        <label>Monthly Interest (0.9583% of Balance) (₹):</label>
-                        <input type="text" id="interest_amount" class="form-control" value="{{ interest_amount }}" readonly>
+                        <label>Monthly Interest (0.9583%) (₹):</label>
+                        <input type="text" id="interest_amount"
+                               class="form-control"
+                               value="{{ interest_amount }}" readonly>
                     </div>
                 </div>
 
+                <!-- Payment Inputs -->
                 <div class="row mt-3">
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <label>Principal Paid (₹):</label>
-                        <input type="number" id="principal_paid" name="principal_paid" class="form-control" 
-                               min="0.01" max="{{ member.max_loan_amount }}" step="0.01" required>
+                        <input type="number" id="principal_paid"
+                               name="principal_paid"
+                               class="form-control"
+                               min="0.01"
+                               max="{{ member.max_loan_amount }}"
+                               step="0.01" required>
                     </div>
-                    <div class="col-md-6">
-                        <label>Total Payment (Interest + Principal) (₹):</label>
-                        <input type="text" id="total_payment" class="form-control" readonly>
+
+                    <div class="col-md-4">
+                        <label>RD Deposited (₹):</label>
+                        <input type="number" id="rd_amount"
+                               name="rd_amount"
+                               class="form-control"
+                               min="0" step="0.01" value="0">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label>Total Payment (Interest + Principal + RD) (₹):</label>
+                        <input type="text" id="total_payment"
+                               class="form-control" readonly>
                     </div>
                 </div>
 
+                <!-- Repayment Number -->
                 <div class="row mt-3">
                     <div class="col-md-6">
                         <label>Repayment Number:</label>
-                        <input type="text" class="form-control" value="{{ repayment_number }}" disabled>
+                        <input type="text" class="form-control"
+                               value="{{ repayment_number }}" disabled>
                     </div>
                 </div>
 
+                <!-- Buttons -->
                 <div class="text-center mt-4">
-                    <button type="submit" class="btn btn-success">Submit Payment</button>
-                    <a href="{% url 'loan' %}" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-success">
+                        Submit Payment
+                    </button>
+                    <a href="{% url 'loan' %}" class="btn btn-secondary">
+                        Cancel
+                    </a>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
+<!-- JS -->
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const loanBalance = parseFloat("{{ member.max_loan_amount }}") || 0;
-        const interestAmountField = document.getElementById("interest_amount");
-        const principalPaidField = document.getElementById("principal_paid");
-        const totalPaymentField = document.getElementById("total_payment");
-        const repaymentForm = document.getElementById("repaymentForm");
-        const repaymentDateField = document.getElementById("repaymentDate");
+document.addEventListener("DOMContentLoaded", function () {
 
-        // Set default date to today
-        const today = new Date().toISOString().split('T')[0];
-        repaymentDateField.value = today;
+    const loanBalance = parseFloat("{{ member.max_loan_amount }}") || 0;
 
-        function calculatePayment() {
-            const interestAmount = (loanBalance * 0.009583).toFixed(2);
-            interestAmountField.value = interestAmount;
+    const interestAmountField = document.getElementById("interest_amount");
+    const principalPaidField = document.getElementById("principal_paid");
+    const rdAmountField = document.getElementById("rd_amount");
+    const totalPaymentField = document.getElementById("total_payment");
+    const repaymentDateField = document.getElementById("repaymentDate");
 
-            const principalPaid = parseFloat(principalPaidField.value) || 0;
-            const totalPayment = (parseFloat(interestAmount) + principalPaid).toFixed(2);
-            totalPaymentField.value = totalPayment;
+    // Default date = today
+    repaymentDateField.value = new Date().toISOString().split('T')[0];
+
+    function calculatePayment() {
+        const interestAmount = (loanBalance * 0.009583).toFixed(2);
+        interestAmountField.value = interestAmount;
+
+        const principalPaid = parseFloat(principalPaidField.value) || 0;
+        const rdAmount = parseFloat(rdAmountField.value) || 0;
+
+        const totalPayment =
+            parseFloat(interestAmount) + principalPaid + rdAmount;
+
+        totalPaymentField.value = totalPayment.toFixed(2);
+    }
+
+    principalPaidField.addEventListener("input", function () {
+        if (parseFloat(this.value) > loanBalance) {
+            this.value = loanBalance.toFixed(2);
         }
-
-        principalPaidField.addEventListener("input", function() {
-            if (parseFloat(this.value) > loanBalance) {
-                this.value = loanBalance.toFixed(2);
-            }
-            calculatePayment();
-        });
-
-        // Initial calculation
         calculatePayment();
-
-        // Form validation
-        repaymentForm.addEventListener("submit", function(e) {
-            if (parseFloat(principalPaidField.value) <= 0) {
-                e.preventDefault();
-                alert("Principal amount must be greater than 0.");
-                return false;
-            }
-            return true;
-        });
     });
+
+    rdAmountField.addEventListener("input", calculatePayment);
+
+    calculatePayment();
+});
 </script>
 
 {% endblock %}

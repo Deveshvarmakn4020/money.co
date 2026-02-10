@@ -1,22 +1,26 @@
-# updated models.py
-
 from django.db import models
 from django.db.models import UniqueConstraint
 from django.core.validators import RegexValidator
 
+
 # Validator that only allows exactly 10 digits
 phone_validator = RegexValidator(
     regex=r'^\d{10}$',
-    message='Enter a valid 10‑digit mobile number.'
+    message='Enter a valid 10-digit mobile number.'
 )
 
+
 class Member(models.Model):
-    ROLE_CHOICES = [('Teaching', 'Teaching Staff'), ('Non-Teaching', 'Non-Teaching Staff')]
+    ROLE_CHOICES = [
+        ('Teaching', 'Teaching Staff'),
+        ('Non-Teaching', 'Non-Teaching Staff')
+    ]
+
     name            = models.CharField(max_length=100)
     member_id       = models.CharField(max_length=50, unique=True)
     department      = models.CharField(max_length=100, blank=True)
     designation     = models.CharField(max_length=100, blank=True)
-    mob = models.CharField(max_length=10, validators=[phone_validator])
+    mob             = models.CharField(max_length=10, validators=[phone_validator])
     email           = models.EmailField()
     dob             = models.DateField()
     doj             = models.DateField()
@@ -30,6 +34,7 @@ class Member(models.Model):
 
     def __str__(self):
         return self.name
+
 
 class Loan(models.Model):
     member               = models.ForeignKey(Member, on_delete=models.CASCADE, related_name='loans')
@@ -46,19 +51,28 @@ class Loan(models.Model):
     def __str__(self):
         return f"Loan {self.loan_no} for {self.member.name}"
 
+
 class LoanRepayment(models.Model):
     member               = models.ForeignKey(Member, on_delete=models.CASCADE)
-    repayment_number     = models.PositiveIntegerField()   # sequential number per member
+    repayment_number     = models.PositiveIntegerField()
     repayment_date       = models.DateField()
+
     interest_paid        = models.DecimalField(max_digits=10, decimal_places=2)
     principal_paid       = models.DecimalField(max_digits=10, decimal_places=2)
+
+    # ✅ RD (separate, does NOT affect loan logic)
+    rd_amount            = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+
     total_payment        = models.DecimalField(max_digits=10, decimal_places=2)
     outstanding_balance  = models.DecimalField(max_digits=10, decimal_places=2)
 
     class Meta:
         ordering = ('member', 'repayment_number')
         constraints = [
-            models.UniqueConstraint(fields=['member', 'repayment_number'], name='unique_member_repayment')
+            UniqueConstraint(
+                fields=['member', 'repayment_number'],
+                name='unique_member_repayment'
+            )
         ]
 
     def __str__(self):
