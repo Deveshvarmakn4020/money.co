@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-dark mb-1">Monthly Loan Repayment Report</h2>
+            <p class="text-muted">Financial summary for the selected period</p>
+        </div>
+        {% if data %}
+        <div class="btn-group shadow-sm">
+            <a href="{% url 'monthly_report_pdf' %}?month={{ selected_month }}&year={{ selected_year }}" class="btn btn-outline-primary">
+                <i class="bi bi-file-earmark-pdf"></i> Download PDF
+            </a>
+            <button onclick="window.print()" class="btn btn-outline-secondary">
+                <i class="bi bi-printer"></i> Print
+            </button>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body p-4">
+            <form method="POST" class="row g-3 align-items-end">
+                {% csrf_token %}
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Month</label>
+                    <select name="month" class="form-select" required>
+                        <option value="" disabled selected>Select Month</option>
+                        {% for i in "123456789101112"|make_list %}
+                            <option value="{{ forloop.counter }}">{{ forloop.counter }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Year</label>
+                    <input type="number" name="year" class="form-control" placeholder="e.g. 2024" required>
+                </div>
+                <div class="col-md-4">
+                    <button type="submit" class="btn btn-success w-100 fw-bold">Generate Report</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {% if data %}
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-4">Member Name</th>
+                            <th class="text-end">Principal</th>
+                            <th class="text-end">Interest</th>
+                            <th class="text-end pe-4">Total Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in data %}
+                        <tr>
+                            <td class="ps-4 fw-medium">{{ row.member__name }}</td>
+                            <td class="text-end text-monospace">{{ row.total_principal }}</td>
+                            <td class="text-end text-monospace">{{ row.total_interest }}</td>
+                            <td class="text-end pe-4 fw-bold text-dark">
+                                {{ row.total_principal|add:row.total_interest }}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot class="table-light border-top">
+                        <tr class="fw-bold">
+                            <td class="ps-4">Grand Totals</td>
+                            <td class="text-end">{{ grand_totals.grand_principal }}</td>
+                            <td class="text-end">{{ grand_totals.grand_interest }}</td>
+                            <td class="text-end pe-4 text-success">
+                                {{ grand_totals.grand_principal|add:grand_totals.grand_interest }}
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+    /* Styling for a cleaner financial look */
+    .table thead th { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .text-monospace { font-family: 'Courier New', Courier, monospace; }
+    @media print {
+        .btn-group, .card form { display: none !important; }
+        .card { border: none !important; box-shadow: none !important; }
+    }
+</style>
+
+{% endblock %}

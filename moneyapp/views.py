@@ -6,9 +6,13 @@ from .forms import MemberForm, LoginForm, LoanForm
 from .models import Member, Loan, LoanRepayment
 from decimal import Decimal
 from django.db.models import Max, Sum
+from django.http import HttpResponse
+from django.template.loader import get_template
+from xhtml2pdf import pisa
 
 
-# Login View
+# ---------------------- LOGIN ----------------------
+
 def login_view(request):
     form = LoginForm(data=request.POST or None)
     if request.method == "POST":
@@ -26,9 +30,13 @@ def login_view(request):
     return render(request, 'login.html', {'form': form})
 
 
+# ---------------------- HOME ----------------------
+
 def home(request):
     return render(request, 'home.html')
 
+
+# ---------------------- MEMBER ----------------------
 
 def register_member(request):
     if request.method == 'POST':
@@ -59,10 +67,30 @@ def delete_member(request, member_id):
     return redirect('loan')
 
 
+# ---------------------- LOAN ----------------------
+
 def loan_information(request):
     members = Member.objects.all()
     return render(request, 'loan.html', {'members': members})
 
+
+def add_loan(request, member_id):
+    member = get_object_or_404(Member, id=member_id)
+    if request.method == 'POST':
+        form = LoanForm(request.POST)
+        if form.is_valid():
+            loan = form.save(commit=False)
+            loan.member = member
+            loan.save()
+            member.has_loan = True
+            member.save()
+            return redirect('loan')
+    else:
+        form = LoanForm()
+    return render(request, 'add_loan.html', {'form': form, 'member': member})
+
+
+# ---------------------- STAFF FILTER ----------------------
 
 def teaching_staff(request):
     members = Member.objects.filter(role='Teaching', has_loan=True)
@@ -74,6 +102,8 @@ def non_teaching_staff(request):
     return render(request, 'non_teaching_staff.html', {'members': members})
 
 
+# ---------------------- MEMBER DETAIL ----------------------
+
 def detail_members(request, member_id):
     member = get_object_or_404(Member, id=member_id)
     num_repayments = LoanRepayment.objects.filter(member=member).count()
@@ -83,15 +113,14 @@ def detail_members(request, member_id):
     })
 
 
-# ✅ UPDATED Loan Repayment (Dropdown logic added)
+# ---------------------- LOAN REPAYMENT ----------------------
+
 def loan_repayment(request, member_id):
 
-    # Default member (page opened for this member)
     default_member = get_object_or_404(Member, id=member_id)
 
     if request.method == 'POST':
         try:
-            # 🔥 NEW: Check dropdown selection
             selected_member_id = request.POST.get('selected_member')
 
             if selected_member_id:
@@ -135,20 +164,15 @@ def loan_repayment(request, member_id):
                 member.save()
 
             messages.success(request, "Repayment recorded successfully!")
-
-            # 🔥 Redirect to correct member detail
-            return redirect('repayment_details', member_id=member.id)
+            return redirect('repayment_detail', member_id=member.id)
 
         except Exception as e:
             messages.error(request, str(e))
             return redirect('loan_repayment', member_id=default_member.id)
 
-    # GET request logic (unchanged but cleaned)
     interest_amount = round(default_member.max_loan_amount * Decimal('0.009583'), 2)
     repayment_count = LoanRepayment.objects.filter(member=default_member).count()
     repayment_number = repayment_count + 1
-
-    # 🔥 NEW: send all members with loan for dropdown
     all_members = Member.objects.filter(has_loan=True)
 
     return render(request, 'loan_repayment.html', {
@@ -159,21 +183,7 @@ def loan_repayment(request, member_id):
     })
 
 
-def add_loan(request, member_id):
-    member = get_object_or_404(Member, id=member_id)
-    if request.method == 'POST':
-        form = LoanForm(request.POST)
-        if form.is_valid():
-            loan = form.save(commit=False)
-            loan.member = member
-            loan.save()
-            member.has_loan = True
-            member.save()
-            return redirect('loan')
-    else:
-        form = LoanForm()
-    return render(request, 'add_loan.html', {'form': form, 'member': member})
-
+# ---------------------- REPAYMENT LIST ----------------------
 
 def repayments(request):
     loanees = Member.objects.filter(loanrepayment__isnull=False).distinct()
@@ -199,6 +209,8 @@ def repayment_details(request, member_id):
         'final_balance': member.max_loan_amount
     })
 
+
+# ---------------------- PAID OFF ----------------------
 
 def paid_off_list(request):
     latest = LoanRepayment.objects.values('member').annotate(latest_id=Max('id'))
@@ -230,3 +242,72 @@ def view_paid_off_details(request, member_id):
 def paid_off_loanees(request):
     members = Member.objects.filter(max_loan_amount=0)
     return render(request, 'paid_off.html', {'members': members})
+
+
+# ---------------------- MONTHLY REPORT ----------------------
+
+def monthly_report(request):
+    data = None
+    grand_totals = None
+    selected_month = None
+    selected_year = None
+
+    if request.method == "POST":
+        selected_month = request.POST.get("month")
+        selected_year = request.POST.get("year")
+
+        repayments = LoanRepayment.objects.filter(
+            repayment_date__month=selected_month,
+            repayment_date__year=selected_year
+        )
+
+        data = repayments.values('member__name').annotate(
+            total_principal=Sum('principal_paid'),
+            total_interest=Sum('interest_paid')
+        )
+
+        grand_totals = repayments.aggregate(
+            grand_principal=Sum('principal_paid'),
+            grand_interest=Sum('interest_paid')
+        )
+
+    return render(request, 'monthly_report.html', {
+        'data': data,
+        'grand_totals': grand_totals,
+        'selected_month': selected_month,
+        'selected_year': selected_year
+    })
+
+
+def monthly_report_pdf(request):
+    month = request.GET.get("month")
+    year = request.GET.get("year")
+
+    repayments = LoanRepayment.objects.filter(
+        repayment_date__month=month,
+        repayment_date__year=year
+    )
+
+    data = repayments.values('member__name').annotate(
+        total_principal=Sum('principal_paid'),
+        total_interest=Sum('interest_paid')
+    )
+
+    grand_totals = repayments.aggregate(
+        grand_principal=Sum('principal_paid'),
+        grand_interest=Sum('interest_paid')
+    )
+
+    template = get_template("monthly_report_pdf.html")
+    html = template.render({
+        "data": data,
+        "grand_totals": grand_totals,
+        "month": month,
+        "year": year
+    })
+
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="Monthly_Report.pdf"'
+    pisa.CreatePDF(html, dest=response)
+
+    return response

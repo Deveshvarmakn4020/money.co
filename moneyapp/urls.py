@@ -33,5 +33,7 @@ urlpatterns = [
     path('paid_off/', views.paid_off_list, name='paid_off_list'),
     path('paid_off/view/<int:member_id>/', views.view_paid_off_details, name='view_paid_off_details'),  # placeholder
     path('paid-off/', views.paid_off_loanees, name='paid_off_loanees'),
+    path('reports/monthly/', views.monthly_report, name='monthly_report'),
+    path('reports/monthly/pdf/', views.monthly_report_pdf, name='monthly_report_pdf'),
 
 ]
