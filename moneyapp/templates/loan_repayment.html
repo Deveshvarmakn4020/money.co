@@ -22,8 +22,26 @@
             <form method="POST" id="repaymentForm">
                 {% csrf_token %}
 
-                <!-- Repayment Date -->
+                <!-- ✅ NEW: Member Selection Dropdown -->
                 <div class="row">
+                    <div class="col-md-6">
+                        <label>Select Member (Optional):</label>
+                        <select name="selected_member" class="form-control">
+                            <option value="">-- Use Current Member --</option>
+                            {% for m in all_members %}
+                                <option value="{{ m.id }}">
+                                    {{ m.name }} ({{ m.member_id }})
+                                </option>
+                            {% endfor %}
+                        </select>
+                        <small class="text-muted">
+                            If selected, repayment will be stored for chosen member.
+                        </small>
+                    </div>
+                </div>
+
+                <!-- Repayment Date -->
+                <div class="row mt-3">
                     <div class="col-md-6">
                         <label>Repayment Date:</label>
                         <input type="date" name="repayment_date"

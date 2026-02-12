@@ -83,23 +83,33 @@ def detail_members(request, member_id):
     })
 
 
-# ✅ Loan Repayment (RD added, loan untouched)
+# ✅ UPDATED Loan Repayment (Dropdown logic added)
 def loan_repayment(request, member_id):
-    member = get_object_or_404(Member, id=member_id)
+
+    # Default member (page opened for this member)
+    default_member = get_object_or_404(Member, id=member_id)
 
     if request.method == 'POST':
         try:
+            # 🔥 NEW: Check dropdown selection
+            selected_member_id = request.POST.get('selected_member')
+
+            if selected_member_id:
+                member = get_object_or_404(Member, id=selected_member_id)
+            else:
+                member = default_member
+
             repayment_date = request.POST.get('repayment_date')
             principal_paid = Decimal(request.POST.get('principal_paid', 0))
             rd_amount = Decimal(request.POST.get('rd_amount', 0))
 
             if principal_paid <= 0:
                 messages.error(request, "Principal amount must be greater than 0.")
-                return redirect('loan_repayment', member_id=member_id)
+                return redirect('loan_repayment', member_id=default_member.id)
 
             if principal_paid > member.max_loan_amount:
                 messages.error(request, "Principal amount cannot exceed outstanding balance.")
-                return redirect('loan_repayment', member_id=member_id)
+                return redirect('loan_repayment', member_id=default_member.id)
 
             interest_paid = round(member.max_loan_amount * Decimal('0.009583'), 2)
             total_payment = interest_paid + principal_paid + rd_amount
@@ -125,20 +135,27 @@ def loan_repayment(request, member_id):
                 member.save()
 
             messages.success(request, "Repayment recorded successfully!")
-            return redirect('detail_members', member_id=member_id)
+
+            # 🔥 Redirect to correct member detail
+            return redirect('repayment_details', member_id=member.id)
 
         except Exception as e:
             messages.error(request, str(e))
-            return redirect('loan_repayment', member_id=member_id)
+            return redirect('loan_repayment', member_id=default_member.id)
 
-    interest_amount = round(member.max_loan_amount * Decimal('0.009583'), 2)
-    repayment_count = LoanRepayment.objects.filter(member=member).count()
+    # GET request logic (unchanged but cleaned)
+    interest_amount = round(default_member.max_loan_amount * Decimal('0.009583'), 2)
+    repayment_count = LoanRepayment.objects.filter(member=default_member).count()
     repayment_number = repayment_count + 1
 
+    # 🔥 NEW: send all members with loan for dropdown
+    all_members = Member.objects.filter(has_loan=True)
+
     return render(request, 'loan_repayment.html', {
-        'member': member,
+        'member': default_member,
         'interest_amount': interest_amount,
-        'repayment_number': repayment_number
+        'repayment_number': repayment_number,
+        'all_members': all_members
     })
 
 
@@ -163,7 +180,6 @@ def repayments(request):
     return render(request, 'repayment_loanee_list.html', {'loanees': loanees})
 
 
-# ✅ FIXED: RD summary added here
 def repayment_details(request, member_id):
     member = get_object_or_404(Member, id=member_id)
     repayments = LoanRepayment.objects.filter(member=member).order_by('repayment_number')
